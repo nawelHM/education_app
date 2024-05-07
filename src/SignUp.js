@@ -17,6 +17,7 @@ const SignUp = () => {
     niveau_educatif: '',
     specialite: '',
     statut: 'actif',
+    etudiant_id: '', // This field is specific to the parent role
   });
 
   const handleChange = (e) => {
@@ -107,6 +108,11 @@ const SignUp = () => {
                   {selectedRole === 'Etudiant' && (
                     <div className="mb-3">
                       <input type="text" name="niveaueducation" className="form-control" placeholder="Niveau d'études" value={userData.niveaueducation} onChange={handleChange} required />
+                    </div>
+                  )}
+                  {selectedRole === 'Parent' && (
+                    <div className="mb-3">
+                      <input type="text" name="etudiant_id" className="form-control" placeholder="ID de l'étudiant associé" value={userData.etudiant_id} onChange={handleChange} required />
                     </div>
                   )}
                   {selectedRole === 'Enseignant' && (

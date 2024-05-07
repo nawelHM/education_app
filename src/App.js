@@ -12,9 +12,9 @@ import Dashboard from './Dashboard';
 import Sidebar from "./Sidebar";
 import StudentListPage from "./StudentListPage";
 //import ListePostesPage from "./ListePostesPage";
-//import ListeEnseignantsPage from "./ListeEnseignantsPage";
+import ListeEnseignantsPage from "./ListeEnseignantsPage";
 import UpdateContenuEducatif from './UpdateContenuEducatif';
-//import ContenuList from './ContenuList';
+import ContenuList from './ContenuList';
 import AjouterCorrection  from './AjouterCorrection';
 const FooterWithRoute = () => {
   const location = useLocation();
@@ -77,11 +77,11 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sidebar" element={<Sidebar />} />
-          <Route path="/studentlistpage" element={<StudentListPage />} />
-          <Route path="/listeenseignant" element={<ListeEnseignantsPage />} />
+          <Route path="/studentlistpage" element={<StudentListPage /> } /> 
+           <Route path="/listeenseignant" element={<ListeEnseignantsPage />} />
           {/* <Route path="/listeposte" element={<ListePostesPage />} /> */}
           <Route path="/updatecontent" element={<UpdateContenuEducatif />} />
-          {/* <Route path="/courslist" element={<ContenuList />} /> */}
+          <Route path="/courslist" element={<ContenuList />} /> 
           <Route path="/ajoutercorrection" element={<AjouterCorrection />} />
           
         </Routes>
