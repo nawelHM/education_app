@@ -1,42 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import backgroundImage from './assets/bh55.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const Home = () => {
   const niveaux = ["7eme", "8eme", "9eme", "1ere", "2eme", "3eme", "Bac"];
   const typesContenus = ["Cours", "Test", "Devoirs", "Exercices"];
   const semestres = ["S1", "S2", "S3"];
 
-  const staticData = [
-    {
-      type_contenus: "Cours",
-      titre: "Mathématiques",
-      description: "Cours de mathématiques pour les élèves de 7ème année.",
-      trimestre: "s1",
-      date_pub: new Date(),
-      niveau_scolaire: "7eme",
-      reporteur: "John Doe",
-      image: "maths.jpg"
-    },
-    {
-      type_contenus: "Devoirs",
-      titre: "Devoir de français",
-      description: "Devoir de français sur la grammaire et la conjugaison.",
-      trimestre: "s2",
-      date_pub: new Date(),
-      niveau_scolaire: "9eme",
-      reporteur: "Jane Doe",
-      image: "francais.jpg"
-    },
-  ];
-
   const [showExplanation, setShowExplanation] = useState(false);
+  const [courses, setCourses] = useState([]);
 
   const toggleExplanation = () => {
     setShowExplanation(!showExplanation);
   };
+
+  useEffect(() => {
+    async function fetchCourses() {
+      try {
+        const response = await axios.get('http://localhost:4000/enseignantviewcours/cours');
+        setCourses(response.data);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      }
+    }
+    fetchCourses();
+  }, []);
 
   return (
     <div className="container-fluid p-0" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
@@ -77,14 +68,13 @@ const Home = () => {
             <h1 style={{ color: '#2d4059' }}>Bienvenue sur le site Parascolaire</h1>
             <p style={{ color: '#2d4059' }}>Voici un site parascolaire dynamique et coloré !</p>
             <div className="content-container">
-              {staticData.map((content, index) => (
+              {courses.map((content, index) => (
                 <div key={index} className="content-item" style={{ background: 'rgba(255, 255, 255, 0.8)', padding: '20px', borderRadius: '10px', marginBottom: '20px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
                   <h2 style={{ color: '#ff6f61' }}>{content.titre}</h2>
                   <p style={{ color: '#0077c0' }}>{content.description}</p>
                   <p style={{ color: '#41b3a3' }}>Trimestre: {content.trimestre}</p>
                   <p style={{ color: '#f4d35e' }}>Niveau Scolaire: {content.niveau_scolaire}</p>
                   <p style={{ color: '#2d4059' }}>Reporteur: {content.reporteur}</p>
-                 
                   <div style={{ textAlign: 'center' }}>
                     <Link to={`/details/${index}`} className="btn btn-primary mt-3">Plus</Link>
                   </div>

@@ -8,13 +8,21 @@ import Home from './Home';
 import AddContenuEducatif from './AddContenuEducatif';
 import Details from './Details'; // Import the Details component
 import Contact from './Contact';
+import Dashboard from './Dashboard';
+import Sidebar from "./Sidebar";
+import StudentListPage from "./StudentListPage";
+//import ListePostesPage from "./ListePostesPage";
+//import ListeEnseignantsPage from "./ListeEnseignantsPage";
+import UpdateContenuEducatif from './UpdateContenuEducatif';
+//import ContenuList from './ContenuList';
+import AjouterCorrection  from './AjouterCorrection';
 const FooterWithRoute = () => {
   const location = useLocation();
 
   useEffect(() => {
     // Determine whether to show or hide the footer based on the current route
     const path = location.pathname;
-    const routesWithoutFooter = ['/addcontent', '/login', '/signup'];
+    const routesWithoutFooter = ['/addcontent', '/login', '/signup' , '/dashboard' , '/studentlistpage','/listeposte','/listeenseignant'];
     const shouldHideFooter = routesWithoutFooter.includes(path);
     const footer = document.querySelector('footer');
     if (footer) {
@@ -25,7 +33,9 @@ const FooterWithRoute = () => {
   return null;
 };
 
+
 const App = () => {
+  const [showNavbar, setShowNavbar] = useState(true);
   // Sample static data
   const staticData = [
     {
@@ -48,13 +58,16 @@ const App = () => {
       reporteur: "Jane Doe",
       image: "francais.jpg"
     },
-    // Add more static data objects as needed
+    
   ];
-
+  useEffect(() => {
+  const path = window.location.pathname;
+    setShowNavbar(!['/dashboard' , '/studentlistpage','/listeposte','/listeenseignant'].includes(path));
+  }, []);
   return (
     <Router>
       <div className="d-flex flex-column min-vh-100">
-        <Navbar />
+      {showNavbar && <Navbar />}
         <Routes>
           <Route path="/" element={<Home staticData={staticData} />} />
           <Route path="/login" element={<LoginPage />} />
@@ -62,6 +75,15 @@ const App = () => {
           <Route path="/addcontent" element={<AddContenuEducatif />} />
           <Route path="/details/:index" element={<Details staticData={staticData} />} /> {/* Route for Details component */}
           <Route path="/contact" element={<Contact />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/sidebar" element={<Sidebar />} />
+          <Route path="/studentlistpage" element={<StudentListPage />} />
+          <Route path="/listeenseignant" element={<ListeEnseignantsPage />} />
+          {/* <Route path="/listeposte" element={<ListePostesPage />} /> */}
+          <Route path="/updatecontent" element={<UpdateContenuEducatif />} />
+          {/* <Route path="/courslist" element={<ContenuList />} /> */}
+          <Route path="/ajoutercorrection" element={<AjouterCorrection />} />
+          
         </Routes>
         <FooterWithRoute />
         <Footer />
