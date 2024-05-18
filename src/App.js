@@ -16,13 +16,26 @@ import ListeEnseignantsPage from "./ListeEnseignantsPage";
 import UpdateContenuEducatif from './UpdateContenuEducatif';
 import ContenuList from './ContenuList';
 import AjouterCorrection  from './AjouterCorrection';
+import UpdateCorrection from './UpdateCorrection';
+import CourseList from './CourseList';
+import UpdateCourse from './UpdateCourse';
+import DevoirList from './DevoirList';
+import UpdateDevoir from './UpdateDevoir';
+import ExerciceList from './ExerciceList';
+import UpdateExercice from './UpdateExercice';
+import ListTest from './ListTest';
+import UpdateTest from './UpdateTest';
+import StudentList from './StudentList';
+import UserProfile from './UserProfile';
+import UserProfileUpdate from './UserProfileUpdate';
+import ParentList from './ParentList';
 const FooterWithRoute = () => {
   const location = useLocation();
 
   useEffect(() => {
     // Determine whether to show or hide the footer based on the current route
     const path = location.pathname;
-    const routesWithoutFooter = ['/addcontent', '/login', '/signup' , '/dashboard' , '/studentlistpage','/listeposte','/listeenseignant'];
+    const routesWithoutFooter = ['/addcontent', '/login', '/signup' , '/dashboard' , '/studentlistpage','/listeposte','/listeenseignant','/studentlist' , '/listparent' , '/listeenseignant'];
     const shouldHideFooter = routesWithoutFooter.includes(path);
     const footer = document.querySelector('footer');
     if (footer) {
@@ -62,7 +75,7 @@ const App = () => {
   ];
   useEffect(() => {
   const path = window.location.pathname;
-    setShowNavbar(!['/dashboard' , '/studentlistpage','/listeposte','/listeenseignant'].includes(path));
+    setShowNavbar(!['/dashboard' , '/studentlistpage','/listeposte','/listeenseignant','/studentlist' , '/listparent' , '/listeenseignant'].includes(path));
   }, []);
   return (
     <Router>
@@ -83,6 +96,19 @@ const App = () => {
           <Route path="/updatecontent" element={<UpdateContenuEducatif />} />
           <Route path="/courslist" element={<ContenuList />} /> 
           <Route path="/ajoutercorrection" element={<AjouterCorrection />} />
+          <Route path="/update/:id" element={<UpdateCorrection />} />
+          <Route path="/cours" element={<CourseList />} />
+          <Route path="/updatecours/:id" element={<UpdateCourse />} />
+          <Route path="/devoirlist" element={<DevoirList />} />
+          <Route path="/update-devoir/:id" element={<UpdateDevoir />} />
+          <Route path="/exercicelist" element={<ExerciceList />} />
+          <Route path="/update-exercice/:id" element={<UpdateExercice />} />
+          <Route path="/listtest" element={<ListTest />} />
+          <Route path="/update-test/:id" element={<UpdateTest />} />
+          <Route path="/studentlist" element={<StudentList />} />
+          <Route path="/UserProfile" element={<UserProfile />} />
+          <Route path="/updateProfile" element={<UserProfileUpdate />} />
+          <Route path="/listparent" element={<ParentList />} />
           
         </Routes>
         <FooterWithRoute />

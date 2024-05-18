@@ -1,48 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaTrash } from 'react-icons/fa';
 
-const ContentList = () => {
-    const [contentList, setContentList] = useState([]);
+const CorrectionList = () => {
+    const [corrections, setCorrections] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        // Fetch the list of content when the component mounts
-        const fetchContentList = async () => {
-            try {
-                const response = await axios.get('/api/contentList'); // Adjust the endpoint
-                setContentList(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchContentList();
+        fetchCorrections();
     }, []);
 
-    const handleUpdate = async (id) => {
-        // Handle update logic
-        console.log('Update content with ID:', id);
-    };
-
-    const handleDelete = async (id) => {
-        // Handle delete logic
-        console.log('Delete content with ID:', id);
+    const fetchCorrections = async () => {
+        try {
+            const response = await axios.get('http://localhost:4000/enseignantviewcorrection/correction');
+            setCorrections(response.data);
+            setErrorMessage('');
+        } catch (error) {
+            console.error('Error fetching corrections:', error);
+            setErrorMessage('Error fetching corrections. Please try again.');
+        }
     };
 
     return (
-        <div>
-            <h2>Content List</h2>
-            <ul>
-                {contentList.map((content) => (
-                    <li key={content._id}>
-                        <span>{content.title}</span>
-                        <button onClick={() => handleUpdate(content._id)}><FaEdit /></button>
-                        <button onClick={() => handleDelete(content._id)}><FaTrash /></button>
-                    </li>
-                ))}
-            </ul>
+        <div className="container mt-5">
+            <h2>Liste des corrections</h2>
+            {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col">Fichier</th>
+                        <th scope="col">ID de l'enseignant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {corrections.map((correction, index) => (
+                        <tr key={index}>
+                            <th scope="row">{index + 1}</th>
+                            <td>{correction.titre}</td>
+                            <td>{correction.fichier_joint}</td>
+                            <td>{correction.enseignant_id || 'N/A'}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
 
-export default ContentList;
+export default CorrectionList;

@@ -1,9 +1,8 @@
 import React from 'react';
-import backgroundImage from './assets/contact2.png'; // Import your background image
 
 const Contact = () => {
   return (
-    <div className="container-fluid d-flex justify-content-center align-items-center" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
+    <div className="container-fluid d-flex justify-content-center align-items-center" style={{ backgroundColor: '#f0f0f0', backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
       <div className="card" style={{ background: 'rgba(255, 255, 255, 0.8)', padding: '40px', borderRadius: '20px', boxShadow: '0 0 20px rgba(0, 0, 0, 0.2)' }}>
         <div className="card-body">
           <h5 className="card-title">Nous Contacter</h5>

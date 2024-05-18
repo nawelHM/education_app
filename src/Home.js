@@ -1,98 +1,142 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import backgroundImage from './assets/bh55.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faQuoteLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
-const Home = () => {
-  const niveaux = ["7eme", "8eme", "9eme", "1ere", "2eme", "3eme", "Bac"];
-  const typesContenus = ["Cours", "Test", "Devoirs", "Exercices"];
-  const semestres = ["S1", "S2", "S3"];
+import yourPhoto from './assets/test8.png'; // Importez votre photo
+import testimonialImage from './assets/test6.png'; // Importez l'image de témoignage
+import additionalImage from './assets/tem6.png'; // Importez une image supplémentaire
+import testimonialImage2 from './assets/tem2.png'; // Importez l'image du deuxième témoignage
+import testimonialImage3 from './assets/tem1.png'; // Importez l'image du troisième témoignage
 
+const Home = () => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [courses, setCourses] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [selectedRole, setSelectedRole] = useState(localStorage.getItem('selectedRole') || 'Étudiant');
 
   const toggleExplanation = () => {
     setShowExplanation(!showExplanation);
   };
 
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+    localStorage.setItem('selectedRole', role);
+    window.location.href = '/signup'; // Redirige vers /signup
+  };
+
+  // Définissez les témoignages
+  const testimonials = [
+    {
+      text: "Ce site m'a vraiment aidé à organiser mes études. Les ressources sont excellentes et faciles à comprendre. Je le recommande vivement !",
+      image: testimonialImage2,
+    },
+    {
+      text: "Parascolaire a été un compagnon essentiel dans mon parcours éducatif. J'ai découvert une nouvelle passion pour l'apprentissage grâce à cette plateforme.",
+      image: testimonialImage3,
+    },
+    {
+      text: "L'expérience utilisateur de Parascolaire est exceptionnelle. La navigation est fluide, et les informations sont présentées clairement et de manière concise.",
+      image: additionalImage,
+    },
+  ];
+
   useEffect(() => {
-    async function fetchCourses() {
+    async function fetchData() {
       try {
-        const response = await axios.get('http://localhost:4000/enseignantviewcours/cours');
-        setCourses(response.data);
+        // Récupération des données de cours depuis l'API
+        const coursesResponse = await axios.get('http://localhost:4000/enseignantviewcours/cours');
+        setCourses(coursesResponse.data);
+
+        // Récupération des données de devoirs depuis l'API
+        const assignmentsResponse = await axios.get('http://localhost:4000/enseignantviewdevoir/devoirs');
+        setAssignments(assignmentsResponse.data);
       } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error('Erreur lors de la récupération des données :', error);
       }
     }
-    fetchCourses();
+    fetchData();
   }, []);
 
   return (
-    <div className="container-fluid p-0" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
+    <div className="container-fluid p-0">
       <div className="row">
-        <div className="col-md-3">
-          <div className="sidebar p-4 mt-5" style={{ marginTop: '40px', marginLeft: '20px', borderRadius: '5px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', background: 'rgba(255, 255, 255, 0.8)' }}>
-            <div className="mb-3">
-              <label>Niveau:</label>
-              {niveaux.map(niveau => (
-                <div key={niveau} className="form-check">
-                  <input className="form-check-input" type="radio" name="niveau" id={niveau} value={niveau} />
-                  <label className="form-check-label" htmlFor={niveau}>{niveau}</label>
+        <div className="col-md-6 text-center" style={{ marginTop: '5px', paddingLeft: 0, paddingRight: '10px' }}>
+          <img src={yourPhoto} alt="Votre Photo" className="img-fluid" style={{ maxWidth: '60%', marginRight: 'auto', marginLeft: 'auto' }} />
+        </div>
+        <div className="col-md-6 text-center" style={{ marginTop: '150px', paddingLeft: '0px' }}>
+          <h1>Bienvenue sur Parascolaire</h1>
+          <div className="role-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+            {['Étudiant', 'Parent', 'Enseignant'].map((role) => (
+              <div 
+                key={role} 
+                className={`card role-card ${selectedRole === role ? 'selected' : ''}`} 
+                onClick={() => handleRoleSelect(role)}
+                style={{ cursor: 'pointer', marginRight: '10px', backgroundColor: selectedRole === role ? '#007bff' : '' }}
+              >
+                <div className="card-body text-center">
+                  <h3 className="card-title font-weight-bold mb-0" style={{ fontSize: '1rem', color: selectedRole === role ? 'white' : 'black' }}>{role}</h3>
                 </div>
-              ))}
-            </div>
-            <div className="mb-3">
-              <label>Type de Contenus:</label>
-              {typesContenus.map(type => (
-                <div key={type} className="form-check">
-                  <input className="form-check-input" type="radio" name="typeContenus" id={type} value={type} />
-                  <label className="form-check-label" htmlFor={type}>{type}</label>
-                </div>
-              ))}
-            </div>
-            <div className="mb-3">
-              <label>Semestre:</label>
-              {semestres.map(semestre => (
-                <div key={semestre} className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id={semestre} value={semestre} />
-                  <label className="form-check-label" htmlFor={semestre}>{semestre}</label>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="col-md-9 mt-5">
-          <div className="representation" style={{ background: 'rgba(255, 255, 255, 0.8)', padding: '20px', borderRadius: '10px', marginBottom: '20px', marginLeft: '20px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
-            <h1 style={{ color: '#2d4059' }}>Bienvenue sur le site Parascolaire</h1>
-            <p style={{ color: '#2d4059' }}>Voici un site parascolaire dynamique et coloré !</p>
-            <div className="content-container">
-              {courses.map((content, index) => (
-                <div key={index} className="content-item" style={{ background: 'rgba(255, 255, 255, 0.8)', padding: '20px', borderRadius: '10px', marginBottom: '20px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
-                  <h2 style={{ color: '#ff6f61' }}>{content.titre}</h2>
-                  <p style={{ color: '#0077c0' }}>{content.description}</p>
-                  <p style={{ color: '#41b3a3' }}>Trimestre: {content.trimestre}</p>
-                  <p style={{ color: '#f4d35e' }}>Niveau Scolaire: {content.niveau_scolaire}</p>
-                  <p style={{ color: '#2d4059' }}>Reporteur: {content.reporteur}</p>
-                  <div style={{ textAlign: 'center' }}>
-                    <Link to={`/details/${index}`} className="btn btn-primary mt-3">Plus</Link>
-                  </div>
-                </div>
-              ))}
+      </div>
+      <div className="row">
+        <h2 className="col-md-12 text-center mt-5">Cours</h2>
+        {Array.isArray(courses) && courses.map((course, index) => (
+          <div key={index} className="col-md-4 mt-4" style={{ marginLeft: '10px', marginRight: '10px' }}>
+            <div className="card" style={{ backgroundColor: '#f9f9f9', padding: '20px' }}>
+              <h3>{course.contenu_id.titre}</h3>
+              <p><strong>Trimestre :</strong> {course.contenu_id.trimestre}</p>
+              <p><strong>Date :</strong> {new Date(course.contenu_id.date_pub).toLocaleDateString()}</p>
+              <div>
+                <Link to={`/details/${index}`} className="btn btn-primary mt-3">Plus de détails</Link>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="fixed-bottom mb-3" style={{ position: 'fixed', left: '20px', bottom: '20px', zIndex: '999', width: '300px' }}>
-          <div className="card" style={{ display: showExplanation ? 'block' : 'none' }}>
-            <div className="card-body">
-              <h5 className="card-title">Bienvenue sur notre site éducatif !</h5>
-              <p className="card-text">Ce site est conçu pour aider les élèves à trouver du contenu pédagogique adapté à leur niveau scolaire et à leurs besoins d'apprentissage.</p>
+        ))}
+      </div>
+      <div className="row">
+        <h2 className="col-md-12 text-center mt-5">Devoirs</h2>
+        {Array.isArray(assignments) && assignments.map((assignment, index) => (
+          <div key={index} className="col-md-4 mt-4" style={{ marginLeft: '10px', marginRight: '10px' }}>
+            <div className="card" style={{ backgroundColor: '#f9f9f9', padding: '20px' }}>
+              <h3>{assignment.contenu_id.titre}</h3>
+              <p><strong>Trimestre :</strong> {assignment.contenu_id.trimestre}</p>
+              <p><strong>Date :</strong> {new Date(assignment.contenu_id.date_pub).toLocaleDateString()}</p>
+              <div>
+                <Link to={`/details/${index}`} className="btn btn-primary mt-3">Plus de détails</Link>
+              </div>
             </div>
           </div>
+        ))}
+      </div>
+      {/* Section Témoignages */}
+      <div className="row mt-5 justify-content-center align-items-center">
+        {testimonials.map((testimonial, index) => (
+          <div key={index} className="col-md-4 text-center mt-5">
+            <div className="testimonial-wrapper" style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '10px', minHeight: '300px' }}>
+              <img src={testimonial.image} alt={`Témoignage ${index+2}`} className="img-fluid mt-3" style={{ maxWidth: '50%' }} />
+              <div className="testimonial-text">
+                <FontAwesomeIcon icon={faQuoteLeft} style={{ fontSize: '2rem', color: '#007bff' }} />
+                <p>"{testimonial.text}"</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Section Image Supplémentaire */}
+      <div className="row mt-5">
+        <div className="col-md-6 text-center">
+          <img src={testimonialImage} alt="Image Supplémentaire" className="img-fluid" style={{ maxWidth: '50%' }} />
         </div>
-        <div className="fixed-icon text-primary" style={{ position: 'fixed', left: '20px', bottom: '20px', fontSize: '2rem', zIndex: '1000' }} onClick={toggleExplanation}>
-          <FontAwesomeIcon icon={faInfoCircle} />
+        <div className="col-md-6" style={{marginTop:'130px'}}>
+          <p className="text-center">
+            <span style={{fontWeight: 'bold', fontSize: '1.5rem'}}>Vous pouvez apprendre n'importe quoi.</span><br />
+            <span style={{color: '#000'}}>Construisez une compréhension approfondie et solide en mathématiques, sciences et bien plus encore.</span>
+          </p>
         </div>
       </div>
     </div>

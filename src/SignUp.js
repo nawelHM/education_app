@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import backgroundImage from './assets/back.png';
-import './SignUp.css';
+import backgroundImage from './assets/logtest.png';
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -31,6 +30,11 @@ const SignUp = () => {
     setStep(2);
   };
 
+  const handleLoginClick = () => {
+    // Redirect to login page
+    window.location.href = '/login';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -57,79 +61,73 @@ const SignUp = () => {
   };
   
   return (
-    <div className="signup-page" style={{ backgroundImage: `url(${backgroundImage})` }}>
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <div className="signup-form">
-              <h2 className="text-center mb-4">Inscription</h2>
-              {step === 1 && (
-                <div>
-                  <p>Choisissez votre rôle :</p>
-                  <div className="d-flex justify-content-between role-selection">
-                    <div className={`card role-card ${selectedRole === 'Etudiant' ? 'selected' : ''}`} onClick={() => handleRoleSelect('Etudiant')}>
-                      <div className="card-body text-center">
-                        <h3 className="card-title font-weight-bold mb-0" style={{ fontSize: '1rem' }}>Étudiant</h3>
+    <div className="signup-page" style={{ display: 'flex', fontFamily: 'Arial, sans-serif' }}>
+      <div style={{ flex: 1, marginTop: '0px' }}>
+        <img src={backgroundImage} alt="background" style={{ width: '60%', height: '100%', objectFit: 'cover' }} />
+      </div>
+      <div style={{ flex: 1, padding: '50px' , marginTop: '50px' }}>
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-md-6">
+              <div className="signup-form">
+                <h2 className="text-center mb-4"><strong>Créer un compte</strong></h2>
+                {step === 1 && (
+                  <div>
+                    <p>Choisissez votre rôle :</p>
+                    <div className="role-container" style={{ display: 'flex', marginBottom: '20px' }}>
+                      {['Etudiant', 'Parent', 'Enseignant'].map((role) => (
+                        <div 
+                          key={role} 
+                          className={`card role-card ${selectedRole === role ? 'selected' : ''}`} 
+                          onClick={() => handleRoleSelect(role)}
+                          style={{ cursor: 'pointer', marginRight: '10px', backgroundColor: selectedRole === role ? '#007bff' : '' }}
+                        >
+                          <div className="card-body text-center">
+                            <h3 className="card-title font-weight-bold mb-0" style={{ fontSize: '1rem', color: selectedRole === role ? 'white' : 'black' }}>{role}</h3>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p>Veuillez entrer votre date de naissance :</p>
+                    <input type="date" name="date_naissance" className="form-control mb-3" value={userData.date_naissance} onChange={handleChange} required />
+                    <p>Vous avez déjà un compte ? <span onClick={handleLoginClick} style={{ cursor: 'pointer', color: '#007bff', textDecoration: 'underline' }}>Connectez-vous ici</span>.</p>
+                  </div>
+                )}
+                {step === 2 && (
+                  <form onSubmit={handleSubmit}>
+                    <div className="signup-form">
+                      <div className="mb-4">
+                        <input type="text" name="nom" className="form-control" placeholder="Nom" value={userData.nom} onChange={handleChange} required />
+                      </div>
+                      <div className="mb-4">
+                        <input type="text" name="prenom" className="form-control" placeholder="Prénom" value={userData.prenom} onChange={handleChange} required />
+                      </div>
+                      <div className="mb-4">
+                        <input type="email" name="email" className="form-control" placeholder="Email" value={userData.email} onChange={handleChange} required />
+                      </div>
+                      <div className="mb-4">
+                        <input type="password" name="mot_de_passe" className="form-control" placeholder="Mot de passe" value={userData.mot_de_passe} onChange={handleChange} required />
+                      </div>
+                      <div className="mb-4">
+                        <input type="text" name="adresse" className="form-control" placeholder="Adresse" value={userData.adresse} onChange={handleChange} required />
+                      </div>
+                      {selectedRole === 'Etudiant' && (
+                        <div className="mb-4">
+                          <input type="text" name="niveaueducation" className="form-control" placeholder="Niveau d'études" value={userData.niveaueducation} onChange={handleChange} required />
+                        </div>
+                      )}
+                      {selectedRole === 'Parent' && (
+                        <div className="mb-4">
+                          <input type="text" name="etudiant_id" className="form-control" placeholder="ID de l'étudiant associé" value={userData.etudiant_id} onChange={handleChange} required />
+                        </div>
+                      )}
+                      <div className="mb-4">
+                        <button type="submit" className="btn btn-primary btn-block rounded-pill py-2">S'inscrire</button>
                       </div>
                     </div>
-                    <div className={`card role-card ${selectedRole === 'Parent' ? 'selected' : ''}`} onClick={() => handleRoleSelect('Parent')}>
-                      <div className="card-body text-center">
-                        <h3 className="card-title font-weight-bold mb-0" style={{ fontSize: '1rem' }}>Parent</h3>
-                      </div>
-                    </div>
-                    <div className={`card role-card ${selectedRole === 'Enseignant' ? 'selected' : ''}`} onClick={() => handleRoleSelect('Enseignant')}>
-                      <div className="card-body text-center">
-                        <h3 className="card-title font-weight-bold mb-0" style={{ fontSize: '1rem' }}>Enseignant</h3>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {step === 2 && (
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <input type="text" name="nom" className="form-control" placeholder="Nom" value={userData.nom} onChange={handleChange} required />
-                  </div>
-                  <div className="mb-3">
-                    <input type="text" name="prenom" className="form-control" placeholder="Prénom" value={userData.prenom} onChange={handleChange} required />
-                  </div>
-                  <div className="mb-3">
-                    <input type="email" name="email" className="form-control" placeholder="Email" value={userData.email} onChange={handleChange} required />
-                  </div>
-                  <div className="mb-3">
-                    <input type="password" name="mot_de_passe" className="form-control" placeholder="Mot de passe" value={userData.mot_de_passe} onChange={handleChange} required />
-                  </div>
-                  <div className="mb-3">
-                    <input type="date" name="date_naissance" className="form-control" placeholder="Date de naissance" value={userData.date_naissance} onChange={handleChange} required />
-                  </div>
-                  <div className="mb-3">
-                    <input type="text" name="adresse" className="form-control" placeholder="Adresse" value={userData.adresse} onChange={handleChange} required />
-                  </div>
-                  {selectedRole === 'Etudiant' && (
-                    <div className="mb-3">
-                      <input type="text" name="niveaueducation" className="form-control" placeholder="Niveau d'études" value={userData.niveaueducation} onChange={handleChange} required />
-                    </div>
-                  )}
-                  {selectedRole === 'Parent' && (
-                    <div className="mb-3">
-                      <input type="text" name="etudiant_id" className="form-control" placeholder="ID de l'étudiant associé" value={userData.etudiant_id} onChange={handleChange} required />
-                    </div>
-                  )}
-                  {selectedRole === 'Enseignant' && (
-                    <div>
-                      <div className="mb-3">
-                        <input type="text" name="niveau_educatif" className="form-control" placeholder="Niveau éducatif" value={userData.niveau_educatif} onChange={handleChange} required />
-                      </div>
-                      <div className="mb-3">
-                        <input type="text" name="specialite" className="form-control" placeholder="Spécialité" value={userData.specialite} onChange={handleChange} required />
-                      </div>
-                    </div>
-                  )}
-                  <div className="mb-4">
-                    <button type="submit" className="btn btn-primary btn-block rounded-pill py-2">S'inscrire</button>
-                  </div>
-                </form>
-              )}
+                  </form> 
+                )}
+              </div>
             </div>
           </div>
         </div>

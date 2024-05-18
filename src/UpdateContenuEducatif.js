@@ -1,87 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import backgroundImage from './assets/1.png';
 
-const UpdateContenuEducatif = ({ contenuId }) => {
-    const [contenu, setContenu] = useState({});
-    const [typeContenus, setTypeContenus] = useState('');
-    const [titre, setTitre] = useState('');
-    const [description, setDescription] = useState('');
-    const [trimestre, setTrimestre] = useState('');
-    const [niveauScolaire, setNiveauScolaire] = useState('7eme');
-    const [reporteur, setReporteur] = useState('');
-    const [image, setImage] = useState('');
+const AddCorrectionForm = () => {
+    const [title, setTitle] = useState('');
+    const [file, setFile] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [teacherId, setTeacherId] = useState('');
 
     useEffect(() => {
-        // Fetch the existing content data based on the contenuId
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`/api/contenueducatif/${contenuId}`);
-                setContenu(response.data);
-                setTypeContenus(response.data.type_contenus);
-                setTitre(response.data.titre);
-                setDescription(response.data.description);
-                setTrimestre(response.data.trimestre);
-                setNiveauScolaire(response.data.niveau_scolaire);
-                setReporteur(response.data.reporteur);
-                setImage(response.data.image);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchData();
-    }, [contenuId]);
+        // Récupérer l'ID de l'utilisateur depuis localStorage
+        const userId = localStorage.getItem('userId');
+        setTeacherId(userId);
+    }, []); // Le tableau vide [] indique que ce code ne s'exécutera qu'une seule fois, après le rendu initial
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = {
-            type_contenus: typeContenus,
-            titre,
-            description,
-            trimestre,
-            niveau_scolaire: niveauScolaire,
-            reporteur,
-            image,
-        };
 
         try {
-            const response = await axios.put(`/api/contenueducatif/${contenuId}`, data);
-            console.log(response.data);
-            // Optionally, redirect or show a success message
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('file', file);
+            formData.append('enseignant_id', teacherId);
+
+            await axios.post('http://localhost:4000/enseignantviewcorrection/correction', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            setTitle('');
+            setFile(null);
+            setErrorMessage('');
+            alert('Correction ajoutée avec succès !');
         } catch (error) {
-            console.error(error);
-            // Handle error if needed
+            console.error('Erreur lors de l\'ajout de la correction :', error);
+            setErrorMessage('Erreur lors de l\'ajout de la correction. Veuillez réessayer.');
         }
     };
 
     return (
-        <div className="container-fluid" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: '100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', minHeight: '100vh' }}>
+        <div className="container mt-5">
             <div className="row justify-content-center">
                 <div className="col-md-6">
-                    <div className="card mt-5">
+                    <div className="card">
+                        <div className="card-header">
+                            <h2 className="mb-0">Ajouter une correction</h2>
+                        </div>
                         <div className="card-body">
-                            <h2 className="card-title text-center mb-4">Update Contenu Educatif</h2>
+                            {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label htmlFor="typeContenus" className="form-label">Type Contenus:</label>
-                                    <select className="form-select" id="typeContenus" value={typeContenus} onChange={(e) => setTypeContenus(e.target.value)}>
-                                        <option value="">Select Type Contenus</option>
-                                        <option value="test">Test</option>
-                                        <option value="devoirs">Devoirs</option>
-                                        <option value="exercices">Exercices</option>
-                                        <option value="cours">Cours</option>
-                                    </select>
+                                    <label htmlFor="title" className="form-label">Titre :</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        id="title" 
+                                        value={title} 
+                                        onChange={(e) => setTitle(e.target.value)} 
+                                        required 
+                                    />
                                 </div>
-                                {/* Other form fields */}
-                                <div className="d-grid mb-3">
-                                    <button type="submit" className="btn btn-primary btn-block">Update</button>
+                                <div className="mb-3">
+                                    <label htmlFor="file" className="form-label">Fichier :</label>
+                                    <input 
+                                        type="file" 
+                                        className="form-control" 
+                                        id="file" 
+                                        onChange={(e) => setFile(e.target.files[0])} 
+                                        required 
+                                    />
                                 </div>
+                                <input 
+                                    type="hidden" 
+                                    value={teacherId} 
+                                    readOnly 
+                                />
+                                <button type="submit" className="btn btn-primary">Soumettre</button>
                             </form>
                         </div>
-                    </div>
-                    <div className="mb-3" style={{ marginBottom: '20px' }}>
-                        {/* Margin applied to this div */}
                     </div>
                 </div>
             </div>
@@ -89,4 +85,4 @@ const UpdateContenuEducatif = ({ contenuId }) => {
     );
 };
 
-export default UpdateContenuEducatif;
+export default AddCorrectionForm;

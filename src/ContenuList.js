@@ -1,70 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import backgroundImage from './assets/1.png';
+import { Link } from 'react-router-dom'; // Import Link from React Router
 
-const ContenuList = () => {
-    const [contenus, setContenus] = useState([]);
+const CorrectionList = () => {
+    const [corrections, setCorrections] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        // Fetch the list of contents from the server
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('/api/contenus');
-                setContenus(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchData();
+        fetchCorrections();
     }, []);
 
-    const handleUpdate = (contenuId) => {
-        // Handle update logic here
-        console.log(`Updating contenu with ID ${contenuId}`);
-    };
-
-    const handleDelete = (contenuId) => {
-        // Handle delete logic here
-        console.log(`Deleting contenu with ID ${contenuId}`);
+    const fetchCorrections = async () => {
+        try {
+            const response = await axios.get('http://localhost:4000/enseignantviewcorrection/correction');
+            setCorrections(response.data);
+            setErrorMessage('');
+        } catch (error) {
+            console.error('Error fetching corrections:', error);
+            setErrorMessage('Error fetching corrections. Please try again.');
+        }
     };
 
     return (
-        <div className="container-fluid" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: '100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', minHeight: '100vh' }}>
-            <div className="row justify-content-center">
-                <div className="col-md-6">
-                    <div className="card mt-5">
-                        <div className="card-body">
-                            <h2 className="card-title text-center mb-4">Liste de Contenus</h2>
-                            <ul className="list-group">
-                                {contenus.map((contenu) => (
-                                    <li key={contenu._id} className="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div>{contenu.titre}</div>
-                                            <div>{contenu.description}</div>
-                                        </div>
-                                        <div>
-                                            <button className="btn btn-outline-primary me-2" onClick={() => handleUpdate(contenu._id)}>
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
-                                            <button className="btn btn-outline-danger" onClick={() => handleDelete(contenu._id)}>
-                                                <FontAwesomeIcon icon={faTrash} />
-                                            </button>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="mb-3" style={{ marginBottom: '20px' }}>
-                        {/* Margin applied to this div */}
-                    </div>
-                </div>
-            </div>
+        <div className="container mt-5">
+            <h2>Liste des corrections</h2>
+            {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+            <table className="table table-bordered" style={{ backgroundColor: '#cce5ff' }}>
+                <thead style={{ backgroundColor: '#007bff', color: 'white' }}>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col">Fichier</th>
+                        <th scope="col">Modifier</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {corrections.map((correction, index) => (
+                        <tr key={index}>
+                            <th scope="row">{index + 1}</th>
+                            <td>{correction.titre}</td>
+                            <td>{correction.fichier_joint}</td>
+                            <td>
+                                {/* Use Link to redirect to the update page */}
+                                <Link to={`/update/${correction._id}`}>
+                                  <button className="btn btn-primary">Modifier</button>
+                                </Link>
+
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
 
-export default ContenuList;
+export default CorrectionList;
